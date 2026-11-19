@@ -44,17 +44,24 @@ Documento de especificação técnica e arquitetura de software para o desenvolv
 * **Tecnologia:** React (com Vite) + JavaScript ou TypeScript.
 * **Justificativa:** Aproveita a curva de aprendizado de React Native (gerenciamento de estados com `useState`, `useEffect`, componentes funcionais e consumo via `fetch`/`axios`), substituindo tags nativas por HTML semântico.
 
-### Estrutura de Interface e UX
-* **Visão Pública (Catálogo):**
-  * Grid responsivo de cards com capa, título, plataforma, status, nota pessoal e horas jogadas.
-  * Barra de filtros rápidos por Status (`Jogando`, `Zerado`, `Pausado`, `Na Fila`) e Plataforma (`PC`, `PlayStation`, `Switch`, etc.).
-  * Modal ou gaveta de detalhes para leitura da análise/anotações do jogo.
-* **Visão Administrativa (Logado):**
-  * Modal discreto de Login (usuário e senha).
-  * Ao autenticar, o token JWT é persistido (ex.: `localStorage`).
-  * Cards ganham ações contextuais: botão de editar e excluir.
-  * Exibição de botão flutuante de ação rápida: `+ Adicionar Jogo`.
-  * Botão de `Logout` no cabeçalho/menu.
+### Estrutura de Interface e UX (Celsius Library)
+
+#### Tela de Entrada (Splash / Cover Screen)
+* **Visual:** Fundo gradiente azul escuro com o título **"Celsius Library"**.
+* **Interação Central:** Botão de play central estilizado que, ao ser clicado, realiza uma transição suave para o catálogo principal.
+* **Rodapé:** Ícones de plataformas suportadas (Nintendo, PlayStation, Steam/PC).
+
+#### Tela Principal (Home / Catálogo)
+* **Destaque Superior (Jogo Atual):**
+  * Card em evidência no topo representando o jogo em andamento no momento (*Current Game*), com sua borda colorida correspondente ao status.
+* **Grid de Jogos com Bordas Codificadas por Status:**
+  * As bordas dos cards representam visualmente a categoria do jogo:
+    * 🔷 **Platinado:** Borda Ciano / Azul Claro (`#00D2FF`)
+    * 🟡 **Zerado:** Borda Amarela / Dourada (`#FFD700`)
+    * 🟢 **Jogando:** Borda Verde (`#00E676`)
+    * ⚪ **Na Lista (Backlog):** Borda Branca (`#FFFFFF`)
+* **Ações Administrativas (Modo Dono):**
+  * Ao autenticar via token JWT, botões sutis de edição, exclusão e `+ Adicionar Jogo`.
 
 ---
 
@@ -83,7 +90,7 @@ Documento de especificação técnica e arquitetura de software para o desenvolv
 | `id` | `UUID` / `Long` | Identificador único (chave primária) |
 | `title` | `VARCHAR(150)` | Nome do jogo (obrigatório) |
 | `platform` | `VARCHAR(50)` | Enum: `PC`, `PLAYSTATION`, `XBOX`, `NINTENDO_SWITCH`, `RETRO`, etc. |
-| `status` | `VARCHAR(30)` | Enum: `PLAYING`, `COMPLETED`, `BACKLOG`, `DROPPED`, `PAUSED` |
+| `status` | `VARCHAR(30)` | Enum: `PLAYING`, `COMPLETED`, `PLATINUM`, `BACKLOG`, `DROPPED`, `PAUSED` |
 | `rating` | `NUMERIC(3,1)` | Nota pessoal de 0.0 a 10.0 (opcional) |
 | `hours_played` | `INTEGER` | Total de horas registradas |
 | `cover_url` | `VARCHAR(500)` | Link externo da imagem da capa |
