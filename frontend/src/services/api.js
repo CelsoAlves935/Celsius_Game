@@ -1,4 +1,7 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8080').replace(
+  /\/+$/,
+  ''
+);
 
 async function request(path, { method = 'GET', body, token } = {}) {
   const headers = {
@@ -9,13 +12,26 @@ async function request(path, { method = 'GET', body, token } = {}) {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_URL}${path}`, {
-    method,
-    headers,
-    body: body ? JSON.stringify(body) : undefined,
-  });
+  let response;
+  try {
+    response = await fetch(`${API_URL}${path}`, {
+      method,
+      headers,
+      body: body ? JSON.stringify(body) : undefined,
+    });
+  } catch {
+    throw new Error(
+      'Não foi possível conectar ao servidor. Verifique se o backend está ligado ou aguarde alguns segundos.'
+    );
+  }
 
   if (!response.ok) {
+    if (response.status === 401 || response.status === 403) {
+      const authErr = new Error('Credenciais inválidas ou sessão expirada.');
+      authErr.status = response.status;
+      throw authErr;
+    }
+
     let errorMessage = `Erro ${response.status}`;
     try {
       const errorData = await response.json();

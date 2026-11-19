@@ -16,8 +16,12 @@ export function LoginModal({ onClose, onLoginSuccess }) {
       const data = await login(username, password);
       onLoginSuccess(data.token);
       onClose();
-    } catch {
-      setError('Usuário ou senha inválidos.');
+    } catch (err) {
+      if (err.status === 401 || err.status === 403) {
+        setError('Usuário ou senha inválidos.');
+      } else {
+        setError(err.message || 'Erro ao conectar com o servidor.');
+      }
     } finally {
       setLoading(false);
     }
